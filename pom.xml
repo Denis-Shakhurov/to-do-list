@@ -8,5 +8,6 @@
     
     <modules>
         <module>config-server</module>
+        <module>user-service</module>
     </modules>
 </project>

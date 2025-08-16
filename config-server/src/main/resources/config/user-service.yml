@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://to-do-list-db:5432/to-do-list-db
+    username: "{cipher}616d40e1b2bf373a696856d1f7bc2a532a3c9ff8682e60f3b0a0a20edbf55612"
+    password: "{cipher}616d40e1b2bf373a696856d1f7bc2a532a3c9ff8682e60f3b0a0a20edbf55612"
+    driver-class-name: org.hibernate.dialect.PostgreSQLDialect
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
