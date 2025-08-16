@@ -1,0 +1,19 @@
+services:
+  config-server:
+    image: config-server:latest
+    build:
+      context: ./config-server
+      dockerfile: Dockerfile
+    restart: "no"
+    ports:
+      - "8071:8071"
+    environment:
+      SECRET_KEY: {cipher}f81bd42198bd6108fde7f2c5957d814e5428df5a8afbd84c51bcac4b0bdf9802
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:8071/actuator/health || exit 1
+      interval: 30s
+      timeout: 5s
+      start_period: 30s
+      retries: 5
+    labels:
+      amplicode.image: springboot
