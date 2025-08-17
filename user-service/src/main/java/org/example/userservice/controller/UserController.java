@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/users")
@@ -25,12 +28,33 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> getUser(@PathVariable Long id) {
         UserDTO userDTO = userService.getUser(id);
+        userDTO.add(linkTo(methodOn(UserController.class)
+                        .getUser(id))
+                        .withSelfRel(),
+                linkTo(methodOn(UserController.class)
+                        .createUser(null))
+                        .withRel("createUser"),
+                linkTo(methodOn(UserController.class)
+                        .updateUser(null, id))
+                        .withRel("updateUser"),
+                linkTo(methodOn(UserController.class)
+                        .deleteUser(id))
+                        .withRel("deleteUser"));
         return ResponseEntity.ok(userDTO);
     }
 
     @PostMapping("/")
     public ResponseEntity<UserDTO> createUser(@Valid @RequestBody UserCreateDTO createDTO) {
         UserDTO userDTO = userService.createUser(createDTO);
+        userDTO.add(linkTo(methodOn(UserController.class)
+                        .getUser(userDTO.getId()))
+                        .withSelfRel(),
+                linkTo(methodOn(UserController.class)
+                        .updateUser(null, userDTO.getId()))
+                        .withRel("updateUser"),
+                linkTo(methodOn(UserController.class)
+                        .deleteUser(userDTO.getId()))
+                        .withRel("deleteUser"));
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(userDTO);
     }
@@ -39,6 +63,15 @@ public class UserController {
     public ResponseEntity<UserDTO> updateUser(@Valid @RequestBody UserUpdateDTO updateDTO,
                                               @PathVariable Long id) {
         UserDTO userDTO = userService.updateUser(updateDTO, id);
+        userDTO.add(linkTo(methodOn(UserController.class)
+                        .getUser(id))
+                        .withSelfRel(),
+                linkTo(methodOn(UserController.class)
+                        .createUser(null))
+                        .withRel("createUser"),
+                linkTo(methodOn(UserController.class)
+                        .deleteUser(id))
+                        .withRel("deleteUser"));
         return ResponseEntity.ok(userDTO);
     }
 
