@@ -1,0 +1,14 @@
+eureka:
+  instance:
+    hostname: eureka-server
+    appname: eureka-server
+    instance-id: ${eureka.instance.hostname}:${server.port}
+    lease-expiration-duration-in-seconds: 30
+    lease-renewal-interval-in-seconds: 10
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+    service-url:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+    healthcheck:
+      enabled: true

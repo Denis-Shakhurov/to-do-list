@@ -20,6 +20,18 @@ services:
     networks:
       backend:
 
+  eureka-server:
+    build:
+      context: ./eureka-server
+      dockerfile: Dockerfile
+    ports:
+      - "8761:8761"
+    depends_on:
+      config-server:
+        condition: service_healthy
+    networks:
+      backend:
+
   user-service:
     image: user-service:latest
     build:
