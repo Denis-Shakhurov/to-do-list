@@ -1,0 +1,18 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://to-do-list-db:5432/to-do-list-db
+    username: "{cipher}616d40e1b2bf373a696856d1f7bc2a532a3c9ff8682e60f3b0a0a20edbf55612"
+    password: "{cipher}616d40e1b2bf373a696856d1f7bc2a532a3c9ff8682e60f3b0a0a20edbf55612"
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    show-sql: true
+  liquibase:
+    change-log: classpath:db/db.changelog-master.yml
+    enabled: true
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka/

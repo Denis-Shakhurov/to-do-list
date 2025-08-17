@@ -10,5 +10,6 @@
         <module>config-server</module>
         <module>eureka-server</module>
         <module>user-service</module>
+        <module>task-service</module>
     </modules>
 </project>
