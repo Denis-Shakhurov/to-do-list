@@ -1,0 +1,8 @@
+server:
+  port: 8083
+
+spring:
+  application:
+    name: file-service
+  config:
+    import: optional:configserver:http://config-server:8071
