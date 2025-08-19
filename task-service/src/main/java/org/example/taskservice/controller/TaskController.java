@@ -13,11 +13,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/users/{userId}/tasks")
+@RequestMapping("/tasks")
 public class TaskController {
     private final TaskService taskService;
 
@@ -28,7 +29,7 @@ public class TaskController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<TaskDTO> createTask(@PathVariable("userId") Long userId,
+    public ResponseEntity<TaskDTO> createTask(@RequestParam("userId") Long userId,
                                               @RequestBody TaskCreateDTO createDTO) {
         TaskDTO taskDTO = taskService.createTask(userId, createDTO);
         return ResponseEntity.status(HttpStatus.CREATED)
