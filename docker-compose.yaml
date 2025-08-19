@@ -30,6 +30,22 @@ services:
     networks:
       backend:
 
+  gateway-server:
+    image: gateway-server:latest
+    build:
+      context: ./gateway-server
+      dockerfile: Dockerfile
+    restart: "no"
+    ports:
+      - "8080:8080"
+    depends_on:
+      config-server:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
+    networks:
+      backend:
+
   user-service:
     image: user-service:latest
     build:

@@ -1,0 +1,38 @@
+spring:
+  cloud:
+    gateway:
+      discovery.locator:
+        enabled: true
+        lowerCaseServiceId: true
+      httpclient:
+        connect-timeout: 1000
+        response-timeout: 10s
+      routes:
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/users/**
+          filters:
+            - RewritePath=/users/(?<path>.*), /$\{path}
+        - id: task-service
+          uri: lb://tasks-service
+          predicates:
+            - Path=/tasks/**
+          filters:
+            - RewritePath=/tasks/(?<path>.*), /$\{path}
+        - id: file-service
+          uri: lb://file-service
+          predicates:
+            - Path=/files/**
+          filters:
+            - RewritePath=/files/(?<path>.*), /$\{path}
+
+eureka:
+  instance:
+    prefer-ip-address: true
+    lease-renewal-interval-in-seconds: 5
+    lease-expiration-duration-in-seconds: 5
+  client:
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka/
