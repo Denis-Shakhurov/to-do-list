@@ -96,8 +96,24 @@ services:
     networks:
       backend:
 
+  auth-service:
+    image: auth-service:latest
+    build:
+      context: ./auth-service
+      dockerfile: Dockerfile
+    restart: "no"
+    ports:
+      - "8084:8084"
+    depends_on:
+      config-server:
+        condition: service_healthy
+      to-do-list-db:
+        condition: service_healthy
+    networks:
+      backend:
+
   to-do-list-db:
-    image: postgres:17.5
+    image: postgres:17-alpine3.21
     restart: unless-stopped  # Автоматический перезапуск при падении
     ports:
       - "5432:5432"

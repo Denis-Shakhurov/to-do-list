@@ -15,7 +15,7 @@ databaseChangeLog:
       author: DenisShakhurov
       changes:
         - createTable:
-            tableName: users_profiles
+            tableName: users
             columns:
               - column:
                   name: id

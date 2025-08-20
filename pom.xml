@@ -10,6 +10,7 @@
         <module>config-server</module>
         <module>eureka-server</module>
         <module>gateway-server</module>
+        <module>auth-service</module>
         <module>user-service</module>
         <module>task-service</module>
         <module>file-service</module>

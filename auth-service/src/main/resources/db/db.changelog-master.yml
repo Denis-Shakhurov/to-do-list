@@ -1,0 +1,5 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/V1_create_table_users.yml
+  - include:
+      file: db/changelog/V2_create_table_refresh_tokens.yml
