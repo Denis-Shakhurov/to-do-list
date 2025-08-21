@@ -113,7 +113,7 @@ services:
       backend:
 
   to-do-list-db:
-    image: postgres:17-alpine3.21
+    image: elestio/postgres:17
     restart: unless-stopped  # Автоматический перезапуск при падении
     ports:
       - "5432:5432"
