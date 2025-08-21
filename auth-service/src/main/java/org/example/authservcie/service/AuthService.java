@@ -3,6 +3,7 @@ package org.example.authservcie.service;
 import lombok.RequiredArgsConstructor;
 import org.example.authservcie.dto.AuthRequest;
 import org.example.authservcie.dto.AuthResponse;
+import org.example.authservcie.dto.CreateUserProfileRequest;
 import org.example.authservcie.dto.RegisterRequest;
 import org.example.authservcie.exception.AlreadyExistsException;
 import org.example.authservcie.exception.ResourceNotFoundException;
@@ -10,6 +11,7 @@ import org.example.authservcie.model.User;
 import org.example.authservcie.repository.UserRepository;
 import org.example.authservcie.security.JwtService;
 import org.example.authservcie.security.UserDetailsImpl;
+import org.example.authservcie.service.client.UserProfileClient;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,6 +24,7 @@ public class AuthService {
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenService refreshTokenService;
+    private final UserProfileClient userProfileClient;
 
     public AuthResponse register(RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
@@ -37,11 +40,19 @@ public class AuthService {
 
         userRepository.save(user);
 
+        userProfileClient.createUser(new CreateUserProfileRequest(
+                user.getId(),
+                user.getName(),
+                user.getEmail(),
+                user.getRole()
+        ));
+
         String accessToken = jwtService.generateAccessToken(new UserDetailsImpl(user));
         String refreshToken = jwtService.generateRefreshToken(new UserDetailsImpl(user));
         refreshTokenService.saveRefreshToken(user, refreshToken);
 
         return AuthResponse.builder()
+                .id(user.getId())
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .build();
