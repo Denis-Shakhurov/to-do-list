@@ -2,14 +2,13 @@ package org.example.authservcie.security;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import org.example.authservcie.config.JwtConfig;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
-import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 @Service
@@ -22,7 +21,7 @@ public class JwtService {
                 .subject(userDetails.getUsername())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + jwtConfig.accessExpiration()))
-                .signWith(SignatureAlgorithm.HS256, jwtConfig.jwtSecret())
+                .signWith(getKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
@@ -31,7 +30,7 @@ public class JwtService {
                 .subject(userDetails.getUsername())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + jwtConfig.refreshExpiration()))
-                .signWith(SignatureAlgorithm.HS256, jwtConfig.jwtSecret())
+                .signWith(getKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
@@ -44,19 +43,29 @@ public class JwtService {
                 .getSubject();
     }
 
-    public boolean validateToken(String token) {
+    public boolean validateToken(String token, UserDetails userDetails) {
         try {
-            Jwts.parser()
-                    .verifyWith(getKey())
-                    .build()
-                    .parseSignedClaims(token);
-            return true;
+            String username = extractUsername(token);
+            return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
         } catch (Exception e) {
             return false;
         }
     }
 
+    private boolean isTokenExpired(String token) {
+        return extractExpiration(token).before(new Date());
+    }
+
+    private Date extractExpiration(String token) {
+        return Jwts.parser()
+                .verifyWith(getKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .getExpiration();
+    }
+
     private SecretKey getKey() {
-        return new SecretKeySpec(jwtConfig.jwtSecret().getBytes(StandardCharsets.UTF_8),"HmacSHA256");
+        return Keys.hmacShaKeyFor(jwtConfig.jwtSecret().getBytes());
     }
 }

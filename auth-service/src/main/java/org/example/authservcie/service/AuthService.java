@@ -6,11 +6,12 @@ import org.example.authservcie.dto.AuthResponse;
 import org.example.authservcie.dto.RegisterRequest;
 import org.example.authservcie.exception.AlreadyExistsException;
 import org.example.authservcie.exception.ResourceNotFoundException;
-import org.example.authservcie.model.Role;
 import org.example.authservcie.model.User;
 import org.example.authservcie.repository.UserRepository;
 import org.example.authservcie.security.JwtService;
 import org.example.authservcie.security.UserDetailsImpl;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +29,7 @@ public class AuthService {
         }
 
         User user = User.builder()
+                .name(request.getName())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(request.getRole())
@@ -64,6 +66,16 @@ public class AuthService {
     }
 
     public boolean validateToken(String token) {
-        return jwtService.validateToken(token);
+        String username = jwtService.extractUsername(token);
+
+        User user = userRepository.findUserByEmail(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        UserDetails userDetails = org.springframework.security.core.userdetails.User.builder()
+                .username(user.getEmail())
+                .password(user.getPassword())
+                .build();
+
+        return jwtService.validateToken(token, userDetails);
     }
 }
