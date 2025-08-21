@@ -1,0 +1,55 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-user-profiles-table
+      author: DenisShakhurov
+      changes:
+        - createTable:
+            tableName: user_profiles
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    primaryKeyName: pk_user_profiles
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: role
+                  type: VARCHAR(50)
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+            remarks: "Table for storing user profile information"
+
+  - changeSet:
+      id: add-email-unique-constraint
+      author: your-name
+      changes:
+        - addUniqueConstraint:
+            tableName: user_profiles
+            columnNames: email
+            constraintName: uk_user_profiles_email
+
+  - changeSet:
+      id: add-foreign-key-to-users
+      author: your-name
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: user_profiles
+            baseColumnNames: id
+            constraintName: fk_user_profiles_user_id
+            referencedTableName: users
+            referencedColumnNames: id

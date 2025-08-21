@@ -5,21 +5,21 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Value;
 import org.example.userservice.model.RoleUser;
+import org.example.userservice.model.UserProfile;
 
 /**
- * DTO for {@link org.example.userservice.model.User}
+ * DTO for {@link UserProfile}
  */
 @Value
 public class UserCreateDTO {
+    Long id;
+
     @NotBlank(message = "Имя не может быть пустым")
     String name;
     @NotBlank
     @Email(message = "Некорректный email")
     @NotBlank(message = "email не может быть пустым")
     String email;
-    @NotNull
-    @NotBlank(message = "Пароль не должен быть пустым")
-    String password;
     @NotNull
     RoleUser role;
 }

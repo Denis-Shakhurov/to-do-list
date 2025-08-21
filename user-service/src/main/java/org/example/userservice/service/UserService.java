@@ -6,7 +6,7 @@ import org.example.userservice.dto.UserDTO;
 import org.example.userservice.dto.UserUpdateDTO;
 import org.example.userservice.exception.ResourceNotFoundException;
 import org.example.userservice.mapper.UserMapper;
-import org.example.userservice.model.User;
+import org.example.userservice.model.UserProfile;
 import org.example.userservice.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
@@ -17,26 +17,26 @@ public class UserService {
     private final UserMapper userMapper;
 
     public UserDTO getUser(Long id) {
-        User user = userRepository.findById(id)
+        UserProfile userProfile = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User with id: " + id + " not found."));
-        return userMapper.toUserDTO(user);
+        return userMapper.toUserDTO(userProfile);
     }
 
     public UserDTO createUser(UserCreateDTO createDTO) {
-        User user = userMapper.toEntity(createDTO);
-        return userMapper.toUserDTO(userRepository.save(user));
+        UserProfile userProfile = userMapper.toEntity(createDTO);
+        return userMapper.toUserDTO(userRepository.save(userProfile));
     }
 
     public UserDTO updateUser(UserUpdateDTO updateDTO, Long id) {
-        User user = userRepository.findById(id)
+        UserProfile userProfile = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User with id: " + id + " not found."));
-        userMapper.update(updateDTO, user);
-        return userMapper.toUserDTO(userRepository.save(user));
+        userMapper.update(updateDTO, userProfile);
+        return userMapper.toUserDTO(userRepository.save(userProfile));
     }
 
     public void deleteUser(Long id) {
-        User user = userRepository.findById(id)
+        UserProfile userProfile = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User with id: " + id + " not found."));
-        userRepository.delete(user);
+        userRepository.delete(userProfile);
     }
 }
