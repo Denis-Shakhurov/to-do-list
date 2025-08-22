@@ -10,7 +10,6 @@ import org.example.authservcie.exception.ResourceNotFoundException;
 import org.example.authservcie.model.User;
 import org.example.authservcie.repository.UserRepository;
 import org.example.authservcie.security.JwtService;
-import org.example.authservcie.security.UserDetailsImpl;
 import org.example.authservcie.service.client.UserProfileClient;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -47,8 +46,8 @@ public class AuthService {
                 user.getRole()
         ));
 
-        String accessToken = jwtService.generateAccessToken(new UserDetailsImpl(user));
-        String refreshToken = jwtService.generateRefreshToken(new UserDetailsImpl(user));
+        String accessToken = jwtService.generateAccessToken(user);
+        String refreshToken = jwtService.generateRefreshToken(user);
         refreshTokenService.saveRefreshToken(user, refreshToken);
 
         return AuthResponse.builder()
@@ -65,8 +64,8 @@ public class AuthService {
         String refreshToken = null;
 
         if (user.getPassword().equals(request.getPassword())) {
-            accessToken = jwtService.generateAccessToken(new UserDetailsImpl(user));
-            refreshToken = jwtService.generateRefreshToken(new UserDetailsImpl(user));
+            accessToken = jwtService.generateAccessToken(user);
+            refreshToken = jwtService.generateRefreshToken(user);
             refreshTokenService.saveRefreshToken(user, refreshToken);
         }
 

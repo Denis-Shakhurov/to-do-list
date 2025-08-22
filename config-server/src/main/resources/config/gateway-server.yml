@@ -8,6 +8,12 @@ spring:
         connect-timeout: 1000
         response-timeout: 10s
       routes:
+        - id: auth-service
+          uri: lb://auth-service
+          predicates:
+            - Path=/auth/**
+          filters:
+            - RewritePath=/auth/(?<path>.*), /$\{path}
         - id: user-service
           uri: lb://user-service
           predicates:
@@ -36,3 +42,6 @@ eureka:
     register-with-eureka: true
     service-url:
       defaultZone: http://eureka-server:8761/eureka/
+
+jwt:
+  secret: "36b791aaa49dde5129f866e1c6f7ed611b336c1bc37ea95552431aedfd829ab4"
