@@ -63,7 +63,7 @@ public class AuthService {
         String accessToken = null;
         String refreshToken = null;
 
-        if (user.getPassword().equals(request.getPassword())) {
+        if (passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             accessToken = jwtService.generateAccessToken(user);
             refreshToken = jwtService.generateRefreshToken(user);
             refreshTokenService.saveRefreshToken(user, refreshToken);

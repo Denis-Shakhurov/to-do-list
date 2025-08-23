@@ -21,7 +21,7 @@ public class JwtAuthenticationFilter implements GlobalFilter {
         ServerHttpRequest request = exchange.getRequest();
         ServerHttpResponse response = exchange.getResponse();
 
-        if (request.getPath().toString().startsWith("/auth/auth")) {
+        if (request.getPath().toString().startsWith("/auth")) {
             return chain.filter(exchange);
         }
 
@@ -29,17 +29,8 @@ public class JwtAuthenticationFilter implements GlobalFilter {
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
             try {
-                String email = jwtUtil.extractUsername(token);
-                String userId = jwtUtil.extractUserId(token);
-                String role = jwtUtil.extractRole(token);
-
-                ServerHttpRequest mutatedRequest = exchange.getRequest().mutate()
-                        .header("X-User-Id", userId)
-                        .header("X-User-Email", email)
-                        .header("X-User-Role", role)
-                        .build();
-
-                return chain.filter(exchange.mutate().request(mutatedRequest).build());
+                response.setStatusCode(HttpStatus.UNAUTHORIZED);
+                return !jwtUtil.isTokenExpired(token) ? chain.filter(exchange): response.setComplete();
             } catch (Exception e) {
                 // Токен недействителен
                 response.setStatusCode(HttpStatus.UNAUTHORIZED);
