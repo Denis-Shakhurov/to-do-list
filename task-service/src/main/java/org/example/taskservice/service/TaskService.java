@@ -24,7 +24,7 @@ public class TaskService {
 
     public TaskDTO createTask(Long userId,TaskCreateDTO createDTO) {
         Task task = taskMapper.toEntity(createDTO);
-        task.setId(userId);
+        task.setUserId(userId);
         taskRepository.save(task);
         return taskMapper.toTaskDTO(task);
     }

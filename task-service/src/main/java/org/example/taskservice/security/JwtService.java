@@ -3,7 +3,9 @@ package org.example.taskservice.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +32,18 @@ public class JwtService {
 
     public boolean isExpiredToken(String token) {
         return extractClaims(token).getExpiration().before(new Date());
+    }
+
+    public String extractUserId(String token) {
+        return extractClaims(token).get("userId", String.class);
+    }
+
+    public String resolveToken(HttpServletRequest request) {
+        String bearerToken = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
+        }
+        return null;
     }
 
     private Claims extractClaims(String token) {

@@ -1,9 +1,11 @@
 package org.example.taskservice.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.example.taskservice.dto.TaskCreateDTO;
 import org.example.taskservice.dto.TaskDTO;
 import org.example.taskservice.dto.TaskUpdateDTO;
+import org.example.taskservice.security.JwtService;
 import org.example.taskservice.service.TaskService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +15,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/tasks")
 public class TaskController {
     private final TaskService taskService;
+    private final JwtService jwtService;
 
     @GetMapping("/{taskId}")
     public ResponseEntity<TaskDTO> getTask(@PathVariable("taskId") Long taskId) {
@@ -29,9 +31,12 @@ public class TaskController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<TaskDTO> createTask(@RequestParam("userId") Long userId,
-                                              @RequestBody TaskCreateDTO createDTO) {
-        TaskDTO taskDTO = taskService.createTask(userId, createDTO);
+    public ResponseEntity<TaskDTO> createTask(@RequestBody TaskCreateDTO createDTO,
+                                              HttpServletRequest request) {
+        String jwt = jwtService.resolveToken(request);
+        String userId = jwtService.extractUserId(jwt);
+
+        TaskDTO taskDTO = taskService.createTask(Long.parseLong(userId), createDTO);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(taskDTO);
     }
