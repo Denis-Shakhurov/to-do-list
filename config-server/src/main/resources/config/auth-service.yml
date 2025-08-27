@@ -22,3 +22,25 @@ jwt:
   secret: "36b791aaa49dde5129f866e1c6f7ed611b336c1bc37ea95552431aedfd829ab4"
   access-expiration: 86400000  # 24 часа
   refresh-expiration: 604800000  # 7 дней
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0  # 100% трассировка (для разработки)
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,tracing
+  endpoint:
+    health:
+      show-details: always
+
+management.zipkin.tracing.endpoint: http://zipkin:9411/api/v2/spans
+
+logging:
+  pattern:
+    console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} [%X{traceId:-},%X{spanId:-}] %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"
+  level:
+    root: INFO
+    org.springframework: INFO
+    org.springframework.cloud: DEBUG

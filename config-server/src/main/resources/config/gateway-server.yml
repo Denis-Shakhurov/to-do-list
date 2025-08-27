@@ -45,3 +45,15 @@ eureka:
 
 jwt:
   secret: "36b791aaa49dde5129f866e1c6f7ed611b336c1bc37ea95552431aedfd829ab4"
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  zipkin:
+    tracing:
+      endpoint: http://zipkin:9411/api/v2/spans

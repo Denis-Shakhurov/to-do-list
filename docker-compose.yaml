@@ -43,6 +43,8 @@ services:
         condition: service_healthy
       eureka-server:
         condition: service_started
+      zipkin:
+        condition: service_started
     networks:
       backend:
 
@@ -59,6 +61,8 @@ services:
         condition: service_healthy
       to-do-list-db:
         condition: service_healthy
+      zipkin:
+        condition: service_started
     networks:
       backend:
 
@@ -75,6 +79,8 @@ services:
         condition: service_healthy
       to-do-list-db:
         condition: service_healthy
+      zipkin:
+        condition: service_started
     networks:
       backend:
 
@@ -93,6 +99,8 @@ services:
         condition: service_healthy
       to-do-list-db:
         condition: service_healthy
+      zipkin:
+        condition: service_started
     networks:
       backend:
 
@@ -109,6 +117,8 @@ services:
         condition: service_healthy
       to-do-list-db:
         condition: service_healthy
+      zipkin:
+        condition: service_started
     networks:
       backend:
 
@@ -153,6 +163,17 @@ services:
       interval: 30s
       timeout: 20s
       retries: 3
+    networks:
+      backend:
+
+  zipkin:
+    image: openzipkin/zipkin:latest
+    container_name: zipkin
+    ports:
+      - "9411:9411"
+    environment:
+      - STORAGE_TYPE=mem
+    restart: unless-stopped
     networks:
       backend:
 
