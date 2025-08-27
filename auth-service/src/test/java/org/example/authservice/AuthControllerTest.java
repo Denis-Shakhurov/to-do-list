@@ -6,7 +6,7 @@ import org.example.authservcie.dto.AuthRequest;
 import org.example.authservcie.dto.AuthResponse;
 import org.example.authservcie.dto.RegisterRequest;
 import org.example.authservcie.exception.AlreadyExistsException;
-import org.example.authservcie.exception.ResourceNotFoundException;
+import org.example.authservcie.handler.GlobalExceptionHandler;
 import org.example.authservcie.model.Role;
 import org.example.authservcie.service.AuthService;
 import org.junit.jupiter.api.BeforeEach;
@@ -51,7 +51,9 @@ public class AuthControllerTest {
     @BeforeEach
     void setUp() {
         objectMapper = new ObjectMapper();
-        mockMvc = MockMvcBuilders.standaloneSetup(authController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(authController)
+                .setControllerAdvice(GlobalExceptionHandler.class)
+                .build();
     }
 
     @Test
@@ -194,7 +196,7 @@ public class AuthControllerTest {
                 .build();
 
         when(authService.login(any(AuthRequest.class)))
-                .thenThrow(new ResourceNotFoundException("Invalid credentials"));
+                .thenThrow(new RuntimeException("Invalid credentials"));
 
         mockMvc.perform(post(BASE_PATH + "login")
                         .contentType(APPLICATION_JSON)

@@ -37,21 +37,30 @@ public class AuthService {
                 .role(request.getRole())
                 .build();
 
-        userRepository.save(user);
+        // Сохраняем пользователя сразу
+        user = userRepository.save(user);
+        Long userId = user.getId();
 
-        userProfileClient.createUser(new CreateUserProfileRequest(
-                user.getId(),
-                user.getName(),
-                user.getEmail(),
-                user.getRole()
-        ));
+        try {
+            // Пытаемся создать профиль в user-service
+            userProfileClient.createUser(new CreateUserProfileRequest(
+                    userId,
+                    user.getName(),
+                    user.getEmail(),
+                    user.getRole()
+            ));
+        } catch (Exception e) {
+            // Если не удалось - удаляем пользователя (компенсация)
+            userRepository.deleteById(userId);
+            throw new RuntimeException("Failed to create user profile", e);
+        }
 
         String accessToken = jwtService.generateAccessToken(user);
         String refreshToken = jwtService.generateRefreshToken(user);
         refreshTokenService.saveRefreshToken(user, refreshToken);
 
         return AuthResponse.builder()
-                .id(user.getId())
+                .id(userId)
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .build();
