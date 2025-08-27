@@ -21,7 +21,8 @@ public class JwtAuthenticationFilter implements GlobalFilter {
         ServerHttpRequest request = exchange.getRequest();
         ServerHttpResponse response = exchange.getResponse();
 
-        if (request.getPath().toString().startsWith("/auth")) {
+        String requestPath = request.getPath().toString();
+        if (requestPath.startsWith("/auth")) {
             return chain.filter(exchange);
         }
 
