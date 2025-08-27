@@ -29,48 +29,32 @@ public class TaskController {
 
     @GetMapping("/{taskId}")
     public ResponseEntity<TaskDTO> getTask(@PathVariable("taskId") Long taskId) {
-        try {
-            TaskDTO taskDTO = taskService.getTask(taskId);
-            return ResponseEntity.ok(taskDTO);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+        TaskDTO taskDTO = taskService.getTask(taskId);
+        return ResponseEntity.ok(taskDTO);
     }
 
     @PostMapping("/")
     public ResponseEntity<TaskDTO> createTask(@Valid @RequestBody TaskCreateDTO createDTO,
                                               HttpServletRequest request) {
-        try {
-            String jwt = jwtService.resolveToken(request);
-            String userId = jwtService.extractUserId(jwt);
+        String jwt = jwtService.resolveToken(request);
+        String userId = jwtService.extractUserId(jwt);
 
-            TaskDTO taskDTO = taskService.createTask(Long.parseLong(userId), createDTO);
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(taskDTO);
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().build();
-        }
+        TaskDTO taskDTO = taskService.createTask(Long.parseLong(userId), createDTO);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(taskDTO);
     }
 
     @PostMapping("/{taskId}")
     public ResponseEntity<TaskDTO> updateTask(@PathVariable("taskId") Long taskId,
                                               @Valid @RequestBody TaskUpdateDTO updateDTO) {
-        try {
-            TaskDTO taskDTO = taskService.updateTask(updateDTO, taskId);
-            return ResponseEntity.ok(taskDTO);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+        TaskDTO taskDTO = taskService.updateTask(updateDTO, taskId);
+        return ResponseEntity.ok(taskDTO);
     }
 
     @DeleteMapping("/{taskId}")
     public ResponseEntity<String> deleteTask(@PathVariable("taskId") Long taskId) {
-        try {
-            taskService.deleteTask(taskId);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                    .body("Task deleted");
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+        taskService.deleteTask(taskId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .body("Task deleted");
     }
 }

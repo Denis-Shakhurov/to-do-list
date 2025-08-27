@@ -7,6 +7,7 @@ import org.example.taskservice.dto.TaskCreateDTO;
 import org.example.taskservice.dto.TaskDTO;
 import org.example.taskservice.dto.TaskUpdateDTO;
 import org.example.taskservice.exception.ResourceNotFoundException;
+import org.example.taskservice.handler.GlobalExceptionHandler;
 import org.example.taskservice.model.TaskStatus;
 import org.example.taskservice.security.JwtService;
 import org.example.taskservice.service.TaskService;
@@ -56,7 +57,9 @@ public class TaskControllerTest {
     @BeforeEach
     void setUp() {
         objectMapper = new ObjectMapper();
-        mockMvc = MockMvcBuilders.standaloneSetup(taskController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(taskController)
+                .setControllerAdvice(GlobalExceptionHandler.class)
+                .build();
     }
 
     @Test
