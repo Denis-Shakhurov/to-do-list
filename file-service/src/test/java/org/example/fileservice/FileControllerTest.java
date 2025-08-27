@@ -3,8 +3,8 @@ package org.example.fileservice;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import org.example.fileservice.controller.FileController;
-import org.example.fileservice.dto.FileResponse;
 import org.example.fileservice.exception.FileStorageException;
+import org.example.fileservice.handler.GlobalExceptionHandler;
 import org.example.fileservice.model.FileMetadata;
 import org.example.fileservice.security.JwtService;
 import org.example.fileservice.service.FileStorageService;
@@ -16,13 +16,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-
-import java.io.FileNotFoundException;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -33,7 +29,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -42,7 +37,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(MockitoExtension.class)
 public class FileControllerTest {
     private final String BASE_PATH = "/files";
-    private final MediaType APPLICATION_JSON = MediaType.APPLICATION_JSON;
     private MockMvc mockMvc;
 
     private ObjectMapper objectMapper;
@@ -59,7 +53,9 @@ public class FileControllerTest {
     @BeforeEach
     void setUp() {
         objectMapper = new ObjectMapper();
-        mockMvc = MockMvcBuilders.standaloneSetup(fileController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(fileController)
+                .setControllerAdvice(GlobalExceptionHandler.class)
+                .build();
     }
 
     @Test
@@ -135,7 +131,7 @@ public class FileControllerTest {
                 .thenThrow(new FileStorageException("File not found"));
 
         mockMvc.perform(get(BASE_PATH + "/{fileId}", fileId))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isInternalServerError());
 
         verify(fileStorageService, times(1)).getFileMetadata(fileId);
     }
@@ -163,7 +159,7 @@ public class FileControllerTest {
                 .thenThrow(new FileStorageException("Failed to generate URL"));
 
         mockMvc.perform(get(BASE_PATH + "/{fileId}/download", fileId))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isInternalServerError());
 
         verify(fileStorageService, times(1)).generatePresignedUrl(fileId);
     }
@@ -189,7 +185,7 @@ public class FileControllerTest {
                 .when(fileStorageService).deleteFile(fileId);
 
         mockMvc.perform(delete(BASE_PATH + "/{fileId}", fileId))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isInternalServerError());
 
         verify(fileStorageService, times(1)).deleteFile(fileId);
     }

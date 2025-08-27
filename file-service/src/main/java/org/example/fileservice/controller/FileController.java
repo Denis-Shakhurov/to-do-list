@@ -38,32 +38,20 @@ public class FileController {
 
     @GetMapping("/{fileId}")
     public ResponseEntity<FileResponse> getFileMetadata(@PathVariable Long fileId) {
-        try {
-            FileMetadata metadata = fileStorageService.getFileMetadata(fileId);
-            return ResponseEntity.ok(mapToFileResponse(metadata));
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+        FileMetadata metadata = fileStorageService.getFileMetadata(fileId);
+        return ResponseEntity.ok(mapToFileResponse(metadata));
     }
 
     @GetMapping("/{fileId}/download")
     public ResponseEntity<String> generateDownloadUrl(@PathVariable Long fileId) {
-        try {
-            String downloadUrl = fileStorageService.generatePresignedUrl(fileId);
-            return ResponseEntity.ok(downloadUrl);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+        String downloadUrl = fileStorageService.generatePresignedUrl(fileId);
+        return ResponseEntity.ok(downloadUrl);
     }
 
     @DeleteMapping("/{fileId}")
     public ResponseEntity<Void> deleteFile(@PathVariable Long fileId) {
-        try {
-            fileStorageService.deleteFile(fileId);
-            return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+        fileStorageService.deleteFile(fileId);
+        return ResponseEntity.noContent().build();
     }
 
     private FileResponse mapToFileResponse(FileMetadata metadata) {
