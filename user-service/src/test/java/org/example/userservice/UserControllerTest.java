@@ -6,6 +6,7 @@ import org.example.userservice.dto.UserCreateDTO;
 import org.example.userservice.dto.UserDTO;
 import org.example.userservice.dto.UserUpdateDTO;
 import org.example.userservice.exception.ResourceNotFoundException;
+import org.example.userservice.handler.GlobalExceptionHandler;
 import org.example.userservice.model.RoleUser;
 import org.example.userservice.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
@@ -52,7 +53,9 @@ public class UserControllerTest {
     @BeforeEach
     void setUp() {
         objectMapper = new ObjectMapper();
-        mockMvc = MockMvcBuilders.standaloneSetup(userController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(userController)
+                .setControllerAdvice(GlobalExceptionHandler.class)
+                .build();
     }
 
     @Test

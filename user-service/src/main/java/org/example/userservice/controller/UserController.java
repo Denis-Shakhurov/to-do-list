@@ -27,24 +27,20 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> getUser(@PathVariable Long id) {
-        try {
-            UserDTO userDTO = userService.getUser(id);
-            userDTO.add(linkTo(methodOn(UserController.class)
-                            .getUser(id))
-                            .withSelfRel(),
-                    linkTo(methodOn(UserController.class)
-                            .createUser(null))
-                            .withRel("createUser"),
-                    linkTo(methodOn(UserController.class)
-                            .updateUser(null, id))
-                            .withRel("updateUser"),
-                    linkTo(methodOn(UserController.class)
-                            .deleteUser(id))
-                            .withRel("deleteUser"));
-            return ResponseEntity.ok(userDTO);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+        UserDTO userDTO = userService.getUser(id);
+        userDTO.add(linkTo(methodOn(UserController.class)
+                        .getUser(id))
+                        .withSelfRel(),
+                linkTo(methodOn(UserController.class)
+                        .createUser(null))
+                        .withRel("createUser"),
+                linkTo(methodOn(UserController.class)
+                        .updateUser(null, id))
+                        .withRel("updateUser"),
+                linkTo(methodOn(UserController.class)
+                        .deleteUser(id))
+                        .withRel("deleteUser"));
+        return ResponseEntity.ok(userDTO);
     }
 
     @PostMapping("/")
@@ -66,31 +62,23 @@ public class UserController {
     @PostMapping("/{id}")
     public ResponseEntity<UserDTO> updateUser(@Valid @RequestBody UserUpdateDTO updateDTO,
                                               @PathVariable Long id) {
-        try {
-            UserDTO userDTO = userService.updateUser(updateDTO, id);
-            userDTO.add(linkTo(methodOn(UserController.class)
-                            .getUser(id))
-                            .withSelfRel(),
-                    linkTo(methodOn(UserController.class)
-                            .createUser(null))
-                            .withRel("createUser"),
-                    linkTo(methodOn(UserController.class)
-                            .deleteUser(id))
-                            .withRel("deleteUser"));
-            return ResponseEntity.ok(userDTO);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+        UserDTO userDTO = userService.updateUser(updateDTO, id);
+        userDTO.add(linkTo(methodOn(UserController.class)
+                        .getUser(id))
+                        .withSelfRel(),
+                linkTo(methodOn(UserController.class)
+                        .createUser(null))
+                        .withRel("createUser"),
+                linkTo(methodOn(UserController.class)
+                        .deleteUser(id))
+                        .withRel("deleteUser"));
+        return ResponseEntity.ok(userDTO);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable Long id) {
-        try {
-            userService.deleteUser(id);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                    .body("User deleted");
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+        userService.deleteUser(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .body("User deleted");
     }
 }
